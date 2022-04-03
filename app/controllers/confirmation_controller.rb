@@ -1,5 +1,5 @@
 class ConfirmationController < ApplicationController
-  before_action :authorize, except: %i[index reset]
+  before_action :authorize, except: %i[ link reset ]
   
   def link
     if params[:token].blank?

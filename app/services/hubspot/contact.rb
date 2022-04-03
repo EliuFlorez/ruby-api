@@ -50,10 +50,9 @@ class Hubspot::Contact < Hubspot::Resource
 
     def search(query, opts = {})
       Hubspot::PagedCollection.new(opts) do |options, offset, limit|
-        response = Hubspot::Connection.get_json(
-          SEARCH_PATH,
+        response = Hubspot::Connection.get_json(SEARCH_PATH,
           options.merge(q: query, offset: offset, count: limit)
-          )
+        )
 
         contacts = response["contacts"].map { |result| from_result(result) }
         [contacts, response["offset"], response["has-more"]]
@@ -61,11 +60,10 @@ class Hubspot::Contact < Hubspot::Resource
     end
 
     def merge(primary, secondary)
-      Hubspot::Connection.post_json(
-        MERGE_PATH,
+      Hubspot::Connection.post_json(MERGE_PATH,
         params: { id: primary.to_i, no_parse: true },
         body: { "vidToMerge" => secondary.to_i }
-        )
+      )
 
       true
     end

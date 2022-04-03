@@ -1,5 +1,6 @@
 class CrmsController < ApplicationController
   #before_action :authorize, only: %i[ connect callback ]
+  before_action :authorize
   before_action :set_crm, only: %i[ show create update destroy ]
 
   # GET /crms

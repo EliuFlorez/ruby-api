@@ -1,5 +1,5 @@
 class PasswordController < ApplicationController
-  before_action :authorize, except: %i[forgot reset]
+  before_action :authorize, except: %i[ forgot reset ]
   
   def forgot
     if params[:email].blank?

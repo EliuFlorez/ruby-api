@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   resources :crms
   resources :roles
   resources :permissions
-  resources :properties
   resources :prospects
   resources :searches
 
@@ -18,6 +17,7 @@ Rails.application.routes.draw do
   
   # Valid
   post '/check/email', to: 'valid#email'
+  post '/check/username', to: 'valid#username'
 
   # Password
   post 'password/forgot', to: 'password#forgot'

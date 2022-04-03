@@ -1,4 +1,5 @@
 class SearchesController < ApplicationController
+  before_action :authorize
   before_action :set_search, only: %i[ show create update destroy ]
 
   # GET /searches

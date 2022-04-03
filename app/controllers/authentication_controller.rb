@@ -1,5 +1,5 @@
 class AuthenticationController < ApplicationController
-  before_action :authorize, except: %i[signin signup check_email]
+  before_action :authorize, except: %i[ signin signup ]
 
   # POST /auth/signin
   def signin
