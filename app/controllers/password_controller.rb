@@ -1,5 +1,6 @@
 class PasswordController < ApplicationController
   before_action :authorize, except: %i[ forgot reset ]
+  #before_action :set_user, only: %i[ reset ]
   
   def forgot
     if params[:email].blank?
@@ -10,10 +11,23 @@ class PasswordController < ApplicationController
 
     if user.present?
       user.token_save!("password")
-      #UserMailer.password_email(@user).deliver_now
       render json: { success: true }, status: :ok
     else
       render json: { error: ['Email address not found. Please check and try again.'] }, status: :not_found
+    end
+  end
+
+  def token
+    if params[:token].blank?
+      return render json: { error: 'Token not present' }
+    end
+    
+    @user = User.find_by(reset_password_token: params[:token])
+
+    if @user.present? && @user.token_valid!("password")
+      render json: { success: true }, status: :ok
+    else
+      render json: { error:  ['Link not valid or expired. Try generating a new link.'] }, status: :not_found
     end
   end
 
@@ -21,21 +35,32 @@ class PasswordController < ApplicationController
     if params[:token].blank?
       return render json: { error: 'Token not present' }
     end
-
-    if params[:password].blank?
-      return render json: { error: 'Password not present' }
-    end
     
-    user = User.find_by(reset_password_token: params[:token])
+    @user = User.find_by(reset_password_token: params[:token])
 
-    if user.present? && user.token_valid!("password")
-      if user.token_reset!("password", params[:password])
-        render json: { success: true }, status: :ok
+    if @user.present? && @user.token_valid!("password")
+      if @user.update(reset_params)
+        if @user.token_reset!("password")
+          render json: { success: true }, status: :ok
+        else
+          render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
+        end
       else
-        render json: { error: user.errors.full_messages }, status: :unprocessable_entity
+        render json: @user.errors, status: :unprocessable_entity
       end
     else
       render json: { error:  ['Link not valid or expired. Try generating a new link.'] }, status: :not_found
     end
   end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_user
+      @user = User.find_by(reset_password_token: params[:token])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def reset_params
+      params.permit(:password, :password_confirmation, :reset_password_token)
+    end
 end

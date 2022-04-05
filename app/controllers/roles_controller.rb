@@ -4,9 +4,34 @@ class RolesController < ApplicationController
 
   # GET /roles
   def index
-    @roles = Role.all
+    # Variable
+    query = nil
+    limit = 20
+    offset = 0
 
-    render json: @roles
+    if params[:query].present?
+      query = params[:query]
+    end
+
+    if params[:limit].present?
+      limit = params[:limit]
+    end
+
+    if params[:offset].present?
+      offset = params[:offset]
+    end
+
+    total = 0
+
+    if query.present?
+      @roles = Role.where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
+      total = @roles.count
+    else
+      @roles = Role.limit(limit).offset(offset).order(:id)
+      total = Role.all.count
+    end
+
+    render json: { items: @roles, total: total }, list: true, status: :ok
   end
 
   # GET /roles/1
@@ -47,6 +72,6 @@ class RolesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def role_params
-      params.require(:role).permit(:name)
+      params.permit(:name)
     end
 end

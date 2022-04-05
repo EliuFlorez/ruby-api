@@ -5,11 +5,13 @@ Rails.application.routes.draw do
 
   # Resources all
   resources :users
-  resources :crms
-  resources :roles
-  resources :permissions
   resources :prospects
-  resources :searches
+  
+  # Resources Admin
+  # resources :crms
+  # resources :searches
+  # resources :roles
+  # resources :permissions
 
   # Auth Login
   post '/auth/signin', to: 'authentication#signin'
@@ -20,6 +22,7 @@ Rails.application.routes.draw do
   post '/check/username', to: 'valid#username'
 
   # Password
+  get 'password/token', to: 'password#token'
   post 'password/forgot', to: 'password#forgot'
   post 'password/reset', to: 'password#reset'
 
@@ -28,8 +31,8 @@ Rails.application.routes.draw do
   post 'confirmation/reset', to: 'confirmation#reset'
 
   # Oauth Type
-  get 'crm/:type/connect', to: 'crms#connect'
-  get 'crm/:type/callback', to: 'crms#callback'
+  get 'crm/:type/connect', to: 'integration#connect'
+  get 'crm/:type/callback', to: 'integration#callback'
 
   # Search Type
   get 'search/:type/connect', to: 'searches#connect'

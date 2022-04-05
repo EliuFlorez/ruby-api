@@ -11,9 +11,8 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :username, presence: true, uniqueness: true
-  validates :password,
-            length: { minimum: 6 },
-            if: -> { new_record? || !password.nil? }
+  validates :password, presence: true, confirmation: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
+  validates :password_confirmation, presence: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
   # Verifies whether a user is confirmed or not
   def confirmed?
@@ -88,10 +87,9 @@ class User < ApplicationRecord
   end
   
   # Token Reset
-  def token_reset!(type, value)
+  def token_reset!(type)
     if type == "password"
       self.reset_password_token = nil
-      self.password = value
     else
       self.confirmation_token = nil
     end

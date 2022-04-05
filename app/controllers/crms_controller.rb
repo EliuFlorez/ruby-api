@@ -1,10 +1,10 @@
 class CrmsController < ApplicationController
-  #before_action :authorize, only: %i[ connect callback ]
-  before_action :authorize
-  before_action :set_crm, only: %i[ show create update destroy ]
+  before_action :authorize_admin
+  before_action :set_crm, only: %i[ show update destroy ]
 
   # GET /crms
   def index
+    # Variable
     query = nil
     limit = 20
     offset = 0
@@ -21,13 +21,17 @@ class CrmsController < ApplicationController
       offset = params[:offset]
     end
 
+    total = 0
+
     if query.present?
       @crms = Crm.where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
+      total = @crms.count
     else
       @crms = Crm.limit(limit).offset(offset).order(:id)
+      total = Crm.all.count
     end
 
-    render json: { items: @crms, count: @crms.count }, list: true, status: :ok
+    render json: { items: @crms, total: total }, list: true, status: :ok
   end
 
   # GET /crms/1
@@ -37,8 +41,10 @@ class CrmsController < ApplicationController
 
   # POST /crms
   def create
-    if @crm.update(crm_params)
-      render json: @crm
+    @crm = Crm.new(crm_params)
+
+    if @crm.save
+      render json: @crm, status: :created, location: @crm
     else
       render json: @crm.errors, status: :unprocessable_entity
     end
@@ -58,39 +64,6 @@ class CrmsController < ApplicationController
     @crm.destroy
   end
 
-  def connect
-    if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
-    end
-    
-    # Oauth Authorize
-    url_oauth = CrmProvider.oauth(params[:type]).authorize_url()
-    
-    # Redirection
-    redirect_to url_oauth, allow_other_host: true
-  end
-
-  def callback
-    if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
-    end
-
-    if params[:code].blank?
-      return render json: { error: 'Oauth Code invalid.' }
-    end
-
-    # Oauth Code
-    oauth = CrmProvider.oauth(params[:type]).callback(params[:code])
-    oauth = ActiveSupport::JSON.encode(oauth)
-    
-    # Crm Create o Update
-    crm = Crm.find_or_create_by(user_id: 1, entity: params[:type])
-    crm.update(name: params[:type], oauth: oauth)
-
-    # Redirection
-    redirect_to "http://localhost:3001/crms"
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_crm
@@ -99,6 +72,6 @@ class CrmsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def crm_params
-      params.permit(:id, :name, :entity, :status)
+      params.permit(:id, :user_id, :name, :entity, :status)
     end
 end

@@ -4,8 +4,34 @@ class ProspectsController < ApplicationController
 
   # GET /prospects
   def index
-    @prospects = Prospect.all.includes(:properties)
-    render json: @prospects
+    # Variable
+    query = nil
+    limit = 20
+    offset = 0
+
+    if params[:query].present?
+      query = params[:query]
+    end
+
+    if params[:limit].present?
+      limit = params[:limit]
+    end
+
+    if params[:offset].present?
+      offset = params[:offset]
+    end
+
+    total = 0
+
+    if query.present?
+      @prospects = Prospect.includes(:properties).where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
+      total = @prospects.count
+    else
+      @prospects = Prospect.includes(:properties).limit(limit).offset(offset).order(:id)
+      total = Prospect.all.count
+    end
+
+    render json: { items: @prospects, total: total }, list: true, status: :ok
   end
 
   # GET /prospects/1

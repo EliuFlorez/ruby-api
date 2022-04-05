@@ -4,9 +4,34 @@ class PermissionsController < ApplicationController
 
   # GET /permissions
   def index
-    @permissions = Permission.all
+    # Variable
+    query = nil
+    limit = 20
+    offset = 0
 
-    render json: @permissions
+    if params[:query].present?
+      query = params[:query]
+    end
+
+    if params[:limit].present?
+      limit = params[:limit]
+    end
+
+    if params[:offset].present?
+      offset = params[:offset]
+    end
+
+    total = 0
+
+    if query.present?
+      @permissions = Permission.where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
+      total = @permissions.count
+    else
+      @permissions = Permission.limit(limit).offset(offset).order(:id)
+      total = Permission.all.count
+    end
+
+    render json: { items: @permissions, total: total }, list: true, status: :ok
   end
 
   # GET /permissions/1
@@ -47,6 +72,6 @@ class PermissionsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def permission_params
-      params.require(:permission).permit(:name)
+      params.permit(:name)
     end
 end

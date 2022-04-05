@@ -1,4 +1,4 @@
-class SearchesController < ApplicationController
+class IntegrationController < ApplicationController
   before_action :authorize
   
   def connect
@@ -7,7 +7,7 @@ class SearchesController < ApplicationController
     end
     
     # Oauth Authorize
-    url_oauth = SearchProvider.oauth(params[:type]).authorize_url()
+    url_oauth = CrmProvider.oauth(params[:type]).authorize_url()
     
     # Redirection
     redirect_to url_oauth, allow_other_host: true
@@ -23,13 +23,14 @@ class SearchesController < ApplicationController
     end
 
     # Oauth Code
-    oauth = SearchProvider.oauth(params[:type]).callback(params[:code])
-
-    # Search Create o Update
-    crm = Search.find_or_create_by(user_id: 1, entity: params[:type])
+    oauth = CrmProvider.oauth(params[:type]).callback(params[:code])
+    oauth = ActiveSupport::JSON.encode(oauth)
+    
+    # Crm Create o Update
+    crm = Crm.find_or_create_by(user_id: 1, entity: params[:type])
     crm.update(name: params[:type], oauth: oauth)
 
     # Redirection
-    redirect_to "http://localhost:3001/searchs"
+    redirect_to "http://localhost:3001"
   end
 end
