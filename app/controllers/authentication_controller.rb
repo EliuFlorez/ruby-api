@@ -5,11 +5,12 @@ class AuthenticationController < ApplicationController
   def signin
     @user = User.find_by_email(params[:email])
     if @user&.authenticate(params[:password])
+      session[:user_id] = @user.id
       token = JsonWebToken.encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
       render json: { token: token, expire: time.strftime("%m-%d-%Y %H:%M") }, status: :ok
     else
-      render json: { error: 'unauthorized' }, status: :unauthorized
+      render json: { error: 'Email or Password invalid' }, status: :unauthorized
     end
   end
 
@@ -18,9 +19,10 @@ class AuthenticationController < ApplicationController
     @user = User.new(signup_params)
 
     if @user.save
-      render json: @user, status: :created, location: @user
+      #session[:user_id] = @user.id
+      render json: { success: true }, status: :created, location: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 

@@ -1,4 +1,7 @@
 class ApplicationController < ActionController::API
+  #skip_before_action :verify_authenticity_token
+  #protect_from_forgery with: :exception
+
   def initialize()
     # CRM
     Hubspot::Config.configure(
@@ -15,9 +18,13 @@ class ApplicationController < ActionController::API
       redirect_uri: "http://localhost:3001/search/linkedin/callback",
     )
   end
-  
-  def current_user
-    @current_user if !current_user.nil?
+
+  def is_authorized
+    render json: {error: "Please sign-in for access"} unless is_signed_in
+  end
+
+  def is_signed_in
+    !!authorize
   end
 
   def not_found
@@ -29,11 +36,9 @@ class ApplicationController < ActionController::API
     header = header.split(' ').last if header
     begin
       decoded = JsonWebToken.decode(header)
-      @current_user = User.find(decoded[:user_id])
-      if @current_user.present?
+      @user = User.find(decoded[:user_id])
+      if @user.present?
         crm_config
-      else
-        return render json: { errors: 'Invalid token' }
       end
     rescue ActiveRecord::RecordNotFound => e
       render json: { errors: e.message }, status: :unauthorized
@@ -42,13 +47,9 @@ class ApplicationController < ActionController::API
     end
   end
 
-  def authorize_admin
-    #@current_user.admin.present?
-  end
-
   def crm_config
-    if @current_user.present?
-      @crms = Crm.where(user_id: @current_user.id).all
+    if @user.present?
+      @crms = Crm.where(user_id: @user.id).all
       @crms.each do |c|
         if c.oauth['access_token'].present?
           access_token = c.oauth['access_token']

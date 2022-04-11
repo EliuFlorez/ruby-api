@@ -13,7 +13,7 @@ class PasswordController < ApplicationController
       user.token_save!("password")
       render json: { success: true }, status: :ok
     else
-      render json: { error: ['Email address not found. Please check and try again.'] }, status: :not_found
+      render json: { error: 'Email address not found. Please check and try again.' }, status: :not_found
     end
   end
 
@@ -27,7 +27,7 @@ class PasswordController < ApplicationController
     if @user.present? && @user.token_valid!("password")
       render json: { success: true }, status: :ok
     else
-      render json: { error:  ['Link not valid or expired. Try generating a new link.'] }, status: :not_found
+      render json: { error:  'Link not valid or expired. Try generating a new link.' }, status: :not_found
     end
   end
 

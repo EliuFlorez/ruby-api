@@ -9,7 +9,6 @@ Rails.application.routes.draw do
   
   # Resources Admin
   # resources :crms
-  # resources :searches
   # resources :roles
   # resources :permissions
 
@@ -22,21 +21,23 @@ Rails.application.routes.draw do
   post '/check/username', to: 'valid#username'
 
   # Password
-  get 'password/token', to: 'password#token'
-  post 'password/forgot', to: 'password#forgot'
-  post 'password/reset', to: 'password#reset'
+  get '/password/token', to: 'password#token'
+  post '/password/forgot', to: 'password#forgot'
+  post '/password/reset', to: 'password#reset'
 
   # Confirmation
-  get 'confirmation/link', to: 'confirmation#link'
-  post 'confirmation/reset', to: 'confirmation#reset'
+  get '/confirmation/link', to: 'confirmation#link'
+  post '/confirmation/reset', to: 'confirmation#reset'
 
   # Oauth Type
-  get 'crm/:type/connect', to: 'integration#connect'
-  get 'crm/:type/callback', to: 'integration#callback'
+  get '/crm/:type/connect', to: 'integration#connect'
+  get '/crm/:type/callback', to: 'integration#callback'
+  get '/crm', to: 'integration#index'
 
   # Search Type
-  get 'search/:type/connect', to: 'searches#connect'
-  get 'search/:type/callback', to: 'searches#callback'
+  get '/search/:type/connect', to: 'search#connect'
+  get '/search/:type/callback', to: 'search#callback'
+  get '/search', to: 'search#index'
 
   # Helath Status
   get '/health', to: 'health#index'

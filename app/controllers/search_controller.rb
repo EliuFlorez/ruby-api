@@ -1,6 +1,11 @@
-class SearchesController < ApplicationController
-  before_action :authorize
+class SearchController < ApplicationController
+  #before_action :authorize
   
+  # GET /search
+  def index
+    render json: { success: true }
+  end
+
   def connect
     if params[:type].blank?
       return render json: { error: 'Oauth Type invalid.' }
@@ -30,6 +35,6 @@ class SearchesController < ApplicationController
     crm.update(name: params[:type], oauth: oauth)
 
     # Redirection
-    redirect_to "http://localhost:3001/searchs"
+    redirect_to "http://localhost:3000/app/overview"
   end
 end

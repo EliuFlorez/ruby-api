@@ -7,6 +7,7 @@ require "active_job/railtie"
 require "active_record/railtie"
 require "active_storage/engine"
 require "action_controller/railtie"
+#require "action_controller/cookies"
 require "action_mailer/railtie"
 require "action_mailbox/engine"
 require "action_text/engine"
@@ -23,6 +24,16 @@ module PipeApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
     #config.logger = Logger.new(STDOUT)
+
+    # This also configures session_options for use below
+    config.session_store :cookie_store, key: '_your_app'
+
+    # Required for all session management (regardless of session_store)
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore, key: '_your_app', expire_after: 20.years 
+    config.middleware.insert_after(ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, key: '_your_app')
+
+    config.middleware.use config.session_store, config.session_options
     
     # Configuration for the application, engines, and railties goes here.
     #
@@ -33,9 +44,6 @@ module PipeApi
     # config.eager_load_paths << Rails.root.join("extras")
     config.eager_load_paths << Rails.root.join("services")
     config.autoload_paths   << Rails.root.join("services")
-
-    #config.eager_load_paths += %W(#{config.root}/services)
-    #config.autoload_paths   += %W(#{config.root}/services)
 
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.

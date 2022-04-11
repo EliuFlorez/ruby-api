@@ -1,6 +1,11 @@
 class IntegrationController < ApplicationController
-  before_action :authorize
+  #before_action :authorize
   
+  # GET /integration
+  def index
+    render json: { success: true }
+  end
+
   def connect
     if params[:type].blank?
       return render json: { error: 'Oauth Type invalid.' }
@@ -31,6 +36,6 @@ class IntegrationController < ApplicationController
     crm.update(name: params[:type], oauth: oauth)
 
     # Redirection
-    redirect_to "http://localhost:3001"
+    redirect_to "http://localhost:3000/app/overview"
   end
 end
