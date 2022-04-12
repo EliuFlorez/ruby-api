@@ -1,37 +1,12 @@
 class CrmsController < ApplicationController
-  before_action :authorize_admin
-  before_action :set_crm, only: %i[ show update destroy ]
+  before_action :authorize
+  before_action :set_crm, only: %i[ show create update destroy ]
 
   # GET /crms
   def index
-    # Variable
-    query = nil
-    limit = 20
-    offset = 0
+    @crms = Crm.where(id: params[:id], user_id: 1)
 
-    if params[:query].present?
-      query = params[:query]
-    end
-
-    if params[:limit].present?
-      limit = params[:limit]
-    end
-
-    if params[:offset].present?
-      offset = params[:offset]
-    end
-
-    total = 0
-
-    if query.present?
-      @crms = Crm.where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
-      total = @crms.count
-    else
-      @crms = Crm.limit(limit).offset(offset).order(:id)
-      total = Crm.all.count
-    end
-
-    render json: { items: @crms, total: total }, list: true, status: :ok
+    render json: @crms, list: true, status: :ok
   end
 
   # GET /crms/1
@@ -41,10 +16,8 @@ class CrmsController < ApplicationController
 
   # POST /crms
   def create
-    @crm = Crm.new(crm_params)
-
-    if @crm.save
-      render json: @crm, status: :created, location: @crm
+    if @crm.update(crm_params)
+      render json: @crm
     else
       render json: @crm.errors, status: :unprocessable_entity
     end
@@ -67,7 +40,7 @@ class CrmsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_crm
-      @crm = Crm.find(params[:id])
+      @crm = Crm.where(id: params[:id], user_id: 1).first
     end
 
     # Only allow a list of trusted parameters through.

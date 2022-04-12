@@ -33,6 +33,6 @@ class AuthenticationController < ApplicationController
   end
 
   def signup_params
-    params.permit(:id, :name, :username, :email, :password, :password_confirmation)
+    params.permit(:id, :name, :email, :password, :password_confirmation)
   end
 end

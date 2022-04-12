@@ -1,11 +1,6 @@
 class SearchController < ApplicationController
   #before_action :authorize
   
-  # GET /search
-  def index
-    render json: { success: true }
-  end
-
   def connect
     if params[:type].blank?
       return render json: { error: 'Oauth Type invalid.' }

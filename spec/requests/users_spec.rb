@@ -20,7 +20,6 @@ RSpec.describe "/users", type: :request do
     #skip("Add a hash of attributes valid for your model")
     {
       name: "Name",
-      username: "username",
       email: "email@email.com",
       password: "0123456789",
       password_confirmation: "0123456789" 
@@ -31,7 +30,6 @@ RSpec.describe "/users", type: :request do
     #skip("Add a hash of attributes invalid for your model")
     {
       name: nil,
-      username: nil,
       email: nil,
       password: nil,
       password_confirmation: nil
@@ -102,7 +100,6 @@ RSpec.describe "/users", type: :request do
         #skip("Add a hash of attributes valid for your model")
         {
           name: "Name Last",
-          username: "username",
           email: "email@email.com"
         }
       }

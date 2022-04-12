@@ -14,7 +14,11 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    # Disanble
+    if @user.update(user_params)
+      render json: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
   end
 
   # PATCH/PUT /users/1
@@ -40,6 +44,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.permit(:id, :name, :username, :email, :password, :password_confirmation)
+      params.permit(:id, :name, :email, :password, :password_confirmation)
     end
 end

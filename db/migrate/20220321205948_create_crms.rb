@@ -5,7 +5,7 @@ class CreateCrms < ActiveRecord::Migration[7.0]
       t.string :entity
       t.string :name
       t.json :oauth
-      t.boolean :status, default: true
+      t.boolean :status, default: false
       t.datetime :expire_at
       
       t.timestamps

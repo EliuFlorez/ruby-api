@@ -1,11 +1,6 @@
 class IntegrationController < ApplicationController
   #before_action :authorize
   
-  # GET /integration
-  def index
-    render json: { success: true }
-  end
-
   def connect
     if params[:type].blank?
       return render json: { error: 'Oauth Type invalid.' }
