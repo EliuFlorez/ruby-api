@@ -1,6 +1,4 @@
 class ApplicationController < ActionController::API
-  #skip_before_action :verify_authenticity_token
-  #protect_from_forgery with: :exception
   
   def initialize()
     # CRM
@@ -19,6 +17,10 @@ class ApplicationController < ActionController::API
     )
   end
 
+  # def current_user
+  # 	@current_user ||= User.find(session[:user_id]) if session[:user_id]
+  # end
+  
   def is_authorized
     render json: {error: "Please sign-in for access"} unless is_signed_in
   end
@@ -32,34 +34,40 @@ class ApplicationController < ActionController::API
   end
 
   def authorize
-    header = request.headers['Authorization']
-    header = header.split(' ').last if header
-    begin
-      decoded = JsonWebToken.decode(header)
-      @user = User.find(decoded[:user_id])
-      if @user.present?
-        crm_config
+    if session[:user_id]
+      @current_user = User.find(session[:user_id])
+    else
+      header = request.headers['Authorization']
+      header = header.split(' ').last if header
+      begin
+        decoded = JsonWebToken.decode(header)
+        @current_user = User.find(decoded[:user_id])
+        if @current_user.present?
+          crm_config()
+        end
+      rescue ActiveRecord::RecordNotFound => e
+        render json: { errors: e.message }, status: :unauthorized
+      rescue JWT::DecodeError => e
+        render json: { errors: e.message }, status: :unauthorized
       end
-    rescue ActiveRecord::RecordNotFound => e
-      render json: { errors: e.message }, status: :unauthorized
-    rescue JWT::DecodeError => e
-      render json: { errors: e.message }, status: :unauthorized
     end
   end
 
-  def crm_config
-    if @user.present?
-      @crms = Crm.where(user_id: @user.id).all
-      @crms.each do |c|
-        if c.oauth['access_token'].present?
-          access_token = c.oauth['access_token']
-          case c.entity
+  def crm_config()
+    if @current_user.present?
+      @crms = Crm.where(user_id: @current_user.id, status: true).first
+      if @crms.present? && @crms.oauth
+        if @crms.oauth['access_token'].present?
+          access_token = @crms.oauth['access_token']
+          case @crms.entity
           when "hubspot"
             Hubspot::Config.token(access_token)
           else
             raise StandardError.new "Error Config: type has an invalid value (#{c.entity})"
           end
         end
+      else
+        puts "crm-oauth: null"
       end
     end
   end

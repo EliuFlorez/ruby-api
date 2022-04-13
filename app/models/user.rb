@@ -13,6 +13,11 @@ class User < ApplicationRecord
   validates :password, presence: true, confirmation: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
   validates :password_confirmation, presence: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
+  def as_json(options={})
+    options[:except] ||= [:password, :password_digest]
+    super(options)
+  end
+
   # Verifies whether a user is confirmed or not
   def confirmed?
     # code here

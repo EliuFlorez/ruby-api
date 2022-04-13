@@ -5,16 +5,17 @@ Rails.application.routes.draw do
 
   # Resources all
   resources :users
+  resources :crms
   resources :prospects
   
   # Resources Admin
-  # resources :crms
   # resources :roles
   # resources :permissions
 
   # Auth Login
   post '/auth/signin', to: 'authentication#signin'
   post '/auth/signup', to: 'authentication#signup'
+  get '/auth/logout', to: 'authentication#logout'
   
   # Valid
   post '/check/email', to: 'valid#email'

@@ -24,10 +24,13 @@ class ProspectsController < ApplicationController
     total = 0
 
     if query.present?
-      @prospects = Prospect.includes(:properties).where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
+      @prospects = Prospect.includes(:properties)
+        .where(user_id: @current_user.id)
+        .where("name like ?", "#{query}%").limit(limit).offset(offset).order(:id)
       total = @prospects.count
     else
-      @prospects = Prospect.includes(:properties).limit(limit).offset(offset).order(:id)
+      @prospects = Prospect.includes(:properties)
+        .where(user_id: @current_user.id).limit(limit).offset(offset).order(:id)
       total = Prospect.all.count
     end
 
@@ -42,26 +45,33 @@ class ProspectsController < ApplicationController
   # POST /prospects
   def create
     # Type
-    validate_type()
+    # validate_type()
     # Find or Create
-    @prospect = Prospect.find_or_create_by(prospect_params)
-    if @prospect.present?
-      prospect_property(@prospect)
+    # @prospect = Prospect.find_or_create_by(prospect_params)
+    # if @prospect.present?
+    #   prospect_property(@prospect)
+    # else
+    #   render json: { errors: "prospect exists" }, status: :unprocessable_entity
+    # end
+    @prospect = Prospect.new(prospect_params)
+
+    if @prospect.save
+      render json: @prospect, status: :created, location: @prospect
     else
-      render json: { errors: "prospect exists" }, status: :unprocessable_entity
+      render json: @prospect.errors, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /prospects/1
   def update
     # Type
-    validate_type()
+    # validate_type()
     # Update
-    if @prospect.update(prospect_params)
-      prospect_property(@prospect)
-    else
-      render json: @prospect.errors, status: :unprocessable_entity
-    end
+    # if @prospect.update(prospect_params)
+    #   prospect_property(@prospect)
+    # else
+    #   render json: @prospect.errors, status: :unprocessable_entity
+    # end
   end
 
   # DELETE /prospects/1
@@ -72,12 +82,12 @@ class ProspectsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_prospect
-      @prospect = Prospect.find(params[:id])
+      @prospect = Prospect.where(id: params[:id], user_id: @current_user.id).first
     end
 
     # Only allow a list of trusted parameters through.
     def prospect_params
-      params.permit(:id, :type, :user_id, :crm_id, :entity, :name, :uid, :perfile_id, :perfile_url, :picture_url, :status)
+      params.permit(:id, :user_id, :crm_id, :entity, :name, :uid, :perfile_url, :picture_url)
     end
 
     def validate_type()

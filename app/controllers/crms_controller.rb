@@ -4,9 +4,10 @@ class CrmsController < ApplicationController
 
   # GET /crms
   def index
-    @crms = Crm.where(id: params[:id], user_id: 1)
-
-    render json: @crms, list: true, status: :ok
+    @crm = Crm.where(user_id: @current_user.id, status: true).first
+    @crms = Crm.where(user_id: @current_user.id)
+    
+    render json: { select: @crm, all: @crms }, list: true, status: :ok
   end
 
   # GET /crms/1
@@ -40,7 +41,7 @@ class CrmsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_crm
-      @crm = Crm.where(id: params[:id], user_id: 1).first
+      @crm = Crm.where(id: params[:id], user_id: @current_user).first
     end
 
     # Only allow a list of trusted parameters through.

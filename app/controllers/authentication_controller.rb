@@ -19,11 +19,17 @@ class AuthenticationController < ApplicationController
     @user = User.new(signup_params)
 
     if @user.save
-      #session[:user_id] = @user.id
+      session[:user_id] = @user.id
       render json: { success: true }, status: :created, location: @user
     else
       render json: { errors: @user.errors }, status: :unprocessable_entity
     end
+  end
+
+  def logout
+    session.delete(:user_id)
+    
+    render json: { success: true }, status: :ok
   end
 
   private
