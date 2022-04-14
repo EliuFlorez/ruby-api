@@ -11,7 +11,7 @@ class CreateCrms < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :prospects, [:user_id, :entity], unique: true
+    add_index :crms, [:user_id, :entity], unique: true
     add_index :crms, :status
   end
 end

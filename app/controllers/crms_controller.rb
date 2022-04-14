@@ -7,7 +7,7 @@ class CrmsController < ApplicationController
     @crm = Crm.where(user_id: @current_user.id, status: true).first
     @crms = Crm.where(user_id: @current_user.id)
     
-    render json: { select: @crm, all: @crms }, list: true, status: :ok
+    render json: { current: @crm, results: @crms }, list: true, status: :ok
   end
 
   # GET /crms/1

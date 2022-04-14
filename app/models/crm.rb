@@ -8,7 +8,7 @@ class Crm < ApplicationRecord
   validates :entity, presence: true
 
   def as_json(options={})
-    options[:except] ||= [:oauth]
+    options[:except] ||= [:oauth, :expire_at, :created_at, :updated_at]
     super(options)
   end
 end
