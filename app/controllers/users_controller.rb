@@ -1,15 +1,15 @@
 class UsersController < ApplicationController
   before_action :authorize
-  before_action :set_user, only: %i[ create update destroy ]
+  before_action :set_user, only: %i[ index create update destroy ]
 
   # GET /users
   def index
-    render json: @current_user
+    render json: { user: @user, crms: @user.crms }, status: :ok
   end
 
   # GET /users/1
   def show
-    render json: @current_user
+    render json: @user, status: :ok
   end
 
   # POST /users

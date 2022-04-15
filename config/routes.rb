@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   # Search Type
   get '/search/:type/connect', to: 'search#connect'
   get '/search/:type/callback', to: 'search#callback'
+  get '/search/:type/list', to: 'search#index'
 
   # Helath Status
   get '/health', to: 'health#index'

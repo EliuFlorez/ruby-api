@@ -6,7 +6,7 @@ module Linkedin
 
     class << self
       def api(method, url, params={})
-        for retries in 1..5 do
+        #for retries in 1..5 do
           begin
             # may raise an exception
     
@@ -28,13 +28,13 @@ module Linkedin
             end
     
             if response.code == 0
-              sleep 5
-              next
+              #sleep 5
+              #next
             end
     
             if response.code >= 500 || response.code <= 599 
-              sleep 5
-              next
+              #sleep 5
+              #next
             end
     
             check_http_code(response);
@@ -45,29 +45,29 @@ module Linkedin
               raise(RequestError.new(response))
             end
           rescue StandardError => e
-            if retries < 4
-              sleep 2
-            else
-              raise StandardError.new "Exception Class: #{ e.class.name }, Message: #{ e.message }, Backtrace: #{ e.backtrace }"
-            end
+            # if retries < 4
+            #   sleep 2
+            # else
+            #   raise StandardError.new "Exception Class: #{ e.class.name }, Message: #{ e.message }, Backtrace: #{ e.backtrace }"
+            # end
           rescue RateLimitException => e
-            if retries < 4
-              sleep e.seconds_to_reset + retries
-            else
-              raise StandardError.new "Exception Class: #{ e.class.name }, Message: #{ e.message }, Backtrace: #{ e.backtrace }"
-            end
+            # if retries < 4
+            #   sleep e.seconds_to_reset + retries
+            # else
+            #   raise StandardError.new "Exception Class: #{ e.class.name }, Message: #{ e.message }, Backtrace: #{ e.backtrace }"
+            # end
           rescue Exception => e
-            if retries < 4
-              sleep 1
-            else
-              raise StandardError.new "Exception Class: #{ e.class.name }, Message: #{ e.message }, Backtrace: #{ e.backtrace }"
-            end
+            # if retries < 4
+            #   sleep 1
+            # else
+            #   raise StandardError.new "Exception Class: #{ e.class.name }, Message: #{ e.message }, Backtrace: #{ e.backtrace }"
+            # end
           else
             # other exceptions
           ensure
             # always executed
           end
-        end
+        #end
       end
     
       def check_http_code(response)
@@ -99,6 +99,9 @@ module Linkedin
 
       def get_json(path, opts)
         url = generate_url(path, opts)
+
+        puts "linkedinUrl: #{url}"
+
         response = get(
           url, 
           format: :json, 

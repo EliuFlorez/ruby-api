@@ -2,6 +2,7 @@ class Prospect < ApplicationRecord
   # Relations
   belongs_to :user
   belongs_to :crm
+  has_many :properties
 
   # Validate
   validates :user, presence: true

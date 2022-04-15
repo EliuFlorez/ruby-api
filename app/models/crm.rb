@@ -1,14 +1,14 @@
 class Crm < ApplicationRecord
   # Relations
   belongs_to :user
-  has_many :prospect
+  has_many :prospects
 
   # Validate
   validates :user, presence: true
   validates :entity, presence: true
 
   def as_json(options={})
-    options[:except] ||= [:oauth, :expire_at, :created_at, :updated_at]
+    options[:only] ||= [:id, :name, :entity, :status]
     super(options)
   end
 end

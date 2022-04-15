@@ -13,6 +13,7 @@ RSpec.describe Prospect, type: :model do
     it "validate relations" do
       should belong_to(:user)
       should belong_to(:crm)
+      should have_many(:properties)
     end
   end
 end

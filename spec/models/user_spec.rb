@@ -9,8 +9,8 @@ RSpec.describe User, type: :model do
     end
 
     it "validate relations" do
-      should have_many(:crm)
-      should have_many(:prospect)
+      should have_many(:crms)
+      should have_many(:prospects)
     end
   end
 end

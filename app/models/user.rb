@@ -3,8 +3,8 @@ class User < ApplicationRecord
   has_secure_password
   
   # Relations
-  has_many :crm
-  has_many :prospect
+  has_many :crms
+  has_many :prospects
 
   # Validate
   validates :name, presence: true
@@ -14,7 +14,7 @@ class User < ApplicationRecord
   validates :password_confirmation, presence: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
   def as_json(options={})
-    options[:except] ||= [:password, :password_digest]
+    options[:only] ||= [:id, :name, :email]
     super(options)
   end
 

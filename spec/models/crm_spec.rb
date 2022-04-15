@@ -9,7 +9,7 @@ RSpec.describe Crm, type: :model do
 
     it "validate relations" do
       should belong_to(:user)
-      should have_many(:prospect)
+      should have_many(:prospects)
     end
   end
 end

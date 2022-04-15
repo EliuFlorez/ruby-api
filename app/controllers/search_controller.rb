@@ -1,6 +1,11 @@
 class SearchController < ApplicationController
-  #before_action :authorize
+  before_action :authorize
   
+  def index
+    response = Linkedin::Connection.api("get", "emailAddress?q=members&projection=(elements*(handle~))")
+    render json: response, status: :ok
+  end
+
   def connect
     if params[:type].blank?
       return render json: { error: 'Oauth Type invalid.' }

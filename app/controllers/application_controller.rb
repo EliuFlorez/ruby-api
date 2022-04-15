@@ -42,19 +42,20 @@ class ApplicationController < ActionController::API
       begin
         decoded = JsonWebToken.decode(header)
         @current_user = User.find(decoded[:user_id])
-        if @current_user.present?
-          crm_config()
-        end
       rescue ActiveRecord::RecordNotFound => e
         render json: { errors: e.message }, status: :unauthorized
       rescue JWT::DecodeError => e
         render json: { errors: e.message }, status: :unauthorized
       end
     end
+    if @current_user.present?
+      crm_config()
+    end
   end
 
   def crm_config()
     if @current_user.present?
+      # CRM
       @crms = Crm.where(user_id: @current_user.id, status: true).first
       if @crms.present? && @crms.oauth
         if @crms.oauth['access_token'].present?
@@ -68,6 +69,22 @@ class ApplicationController < ActionController::API
         end
       else
         puts "crm-oauth: null"
+      end
+
+      # Search
+      @search = Search.where(user_id: @current_user.id, status: true).first
+      if @search.present? && @search.oauth
+        if @search.oauth['access_token'].present?
+          access_token = @search.oauth['access_token']
+          case @search.entity
+          when "linkedin"
+            Linkedin::Config.token(access_token)
+          else
+            raise StandardError.new "Error Config: type has an invalid value (#{c.entity})"
+          end
+        end
+      else
+        puts "search-oauth: null"
       end
     end
   end
