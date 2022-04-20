@@ -16,20 +16,6 @@ class ConfirmationController < ApplicationController
     end
   end
 
-  def token
-    if params[:token].blank?
-      return render json: { error: 'Token not present' }
-    end
-
-    user = User.find_by(confirmation_token: params[:token])
-
-    if user.present? && user.token_valid!("confirmation")
-      render json: { success: true }, status: :ok
-    else
-      render json: { error:  ['Link not valid or expired. Try generating a new link.'] }, status: :not_found
-    end
-  end
-
   def link
     if params[:token].blank?
       return render json: { error: 'Token not present' }
