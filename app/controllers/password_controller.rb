@@ -26,7 +26,7 @@ class PasswordController < ApplicationController
     if @user.present? && @user.token_valid!("password")
       render json: { success: true }, status: :ok
     else
-      render json: { error:  'Link not valid or expired. Try generating a new link.' }, status: :not_found
+      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :not_found
     end
   end
 
@@ -48,7 +48,7 @@ class PasswordController < ApplicationController
         render json: @user.errors, status: :unprocessable_entity
       end
     else
-      render json: { error:  ['Link not valid or expired. Try generating a new link.'] }, status: :not_found
+      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :not_found
     end
   end
 
