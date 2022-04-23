@@ -23,8 +23,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
     t.datetime "expire_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["entity"], name: "index_crms_on_entity"
     t.index ["status"], name: "index_crms_on_status"
+    t.index ["user_id", "entity"], name: "index_crms_on_user_id_and_entity", unique: true
     t.index ["user_id"], name: "index_crms_on_user_id"
   end
 
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
     t.string "name"
     t.string "entity"
     t.json "oauth"
-    t.boolean "status", default: false
+    t.boolean "status", default: true
     t.datetime "expire_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -114,11 +114,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
+    t.string "first_name"
+    t.string "last_name"
     t.string "email"
     t.string "password_digest"
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
+    t.string "phone"
+    t.string "address"
+    t.string "address_number"
+    t.string "city"
+    t.string "provice_state"
+    t.string "portal_code"
+    t.string "country"
+    t.string "password_token"
+    t.datetime "password_sent_at"
     t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
@@ -135,9 +143,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
     t.datetime "updated_at", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token"
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["name"], name: "index_users_on_name"
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token"
-    t.index ["username"], name: "index_users_on_username", unique: true
+    t.index ["password_token"], name: "index_users_on_password_token"
   end
 
   add_foreign_key "crms", "users"

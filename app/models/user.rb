@@ -7,14 +7,27 @@ class User < ApplicationRecord
   has_many :prospects
 
   # Validate
-  validates :name, presence: true
+  validates :first_name, presence: true
+  validates :last_name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, confirmation: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
   validates :password_confirmation, presence: true, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
   def as_json(options={})
-    options[:only] ||= [:id, :name, :email]
+    options[:only] ||= [
+      :id, 
+      :first_name, 
+      :last_name, 
+      :email, 
+      :phone,
+      :address,
+      :address_number,
+      :city,
+      :provice_state,
+      :portal_code,
+      :country
+    ]
     super(options)
   end
 
@@ -72,8 +85,8 @@ class User < ApplicationRecord
   # Token Generate
   def token_save!(type)
     if type == "password"
-      self.reset_password_token = token_secure
-      self.reset_password_sent_at = Time.now.utc
+      self.password_token = token_secure
+      self.password_sent_at = Time.now.utc
     else
       self.confirmation_token = token_secure
       self.confirmation_sent_at = Time.now.utc
@@ -84,7 +97,7 @@ class User < ApplicationRecord
   # Token Valid
   def token_valid!(type)
     if type == "password"
-      (self.reset_password_sent_at + 4.hours) > Time.now.utc
+      (self.password_sent_at + 4.hours) > Time.now.utc
     else
       (self.confirmation_sent_at + 4.hours) > Time.now.utc
     end
@@ -93,7 +106,7 @@ class User < ApplicationRecord
   # Token Reset
   def token_reset!(type)
     if type == "password"
-      self.reset_password_token = nil
+      self.password_token = nil
     else
       self.confirmation_token = nil
     end

@@ -21,7 +21,7 @@ class PasswordController < ApplicationController
       return render json: { error: 'Token not present' }
     end
     
-    @user = User.find_by(reset_password_token: params[:token])
+    @user = User.find_by(password_token: params[:token])
 
     if @user.present? && @user.token_valid!("password")
       render json: { success: true }, status: :ok
@@ -35,7 +35,7 @@ class PasswordController < ApplicationController
       return render json: { error: 'Token not present' }
     end
     
-    @user = User.find_by(reset_password_token: params[:token])
+    @user = User.find_by(password_token: params[:token])
 
     if @user.present? && @user.token_valid!("password")
       if @user.update(reset_params)
@@ -55,11 +55,11 @@ class PasswordController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find_by(reset_password_token: params[:token])
+      @user = User.find_by(password_token: params[:token])
     end
 
     # Only allow a list of trusted parameters through.
     def reset_params
-      params.permit(:password, :password_confirmation, :reset_password_token)
+      params.permit(:password, :password_confirmation, :password_token)
     end
 end
