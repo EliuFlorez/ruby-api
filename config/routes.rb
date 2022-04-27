@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   # Oauth Type
   get '/crm/:type/connect', to: 'integration#connect'
   get '/crm/:type/callback', to: 'integration#callback'
+  get '/crm/:type/select', to: 'integration#select'
 
   # Search Type
   get '/search/:type/connect', to: 'search#connect'

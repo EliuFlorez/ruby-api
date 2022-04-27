@@ -1,5 +1,5 @@
 class IntegrationController < ApplicationController
-  #before_action :authorize
+  before_action :authorize
   
   def connect
     if params[:type].blank?
@@ -27,10 +27,22 @@ class IntegrationController < ApplicationController
     oauth = ActiveSupport::JSON.encode(oauth)
     
     # Crm Create o Update
-    crm = Crm.find_or_create_by(user_id: 1, entity: params[:type])
+    crm = Crm.find_or_create_by(user_id: @current_user.id, entity: params[:type])
     crm.update(name: params[:type], oauth: oauth)
 
     # Redirection
     redirect_to "http://localhost:3000/app/overview"
+  end
+
+  def select
+    if params[:type].blank?
+      return render json: { error: 'Oauth Type invalid.' }
+    end
+    
+    # Crm Create o Update
+    crm = Crm.find_or_create_by(user_id: @current_user.id, entity: params[:type])
+    crm.update(status: true)
+
+    return render json: { success: true }
   end
 end

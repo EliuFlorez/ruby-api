@@ -31,7 +31,7 @@ class SearchController < ApplicationController
     oauth = SearchProvider.oauth(params[:type]).callback(params[:code])
 
     # Search Create o Update
-    crm = Search.find_or_create_by(user_id: 1, entity: params[:type])
+    crm = Search.find_or_create_by(user_id: @current_user.id, entity: params[:type])
     crm.update(name: params[:type], oauth: oauth)
 
     # Redirection
