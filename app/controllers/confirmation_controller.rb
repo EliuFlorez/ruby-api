@@ -3,7 +3,7 @@ class ConfirmationController < ApplicationController
 
   def reset
     if params[:email].blank?
-      return render json: {error: 'Email not present'}
+      render json: {error: 'Email not present'}
     end
 
     user = User.find_by(email: params[:email])
@@ -18,7 +18,7 @@ class ConfirmationController < ApplicationController
 
   def link
     if params[:token].blank?
-      return render json: { error: 'Token not present' }
+      render json: { error: 'Token not present' }
     end
 
     user = User.find_by(confirmation_token: params[:token])
@@ -27,7 +27,7 @@ class ConfirmationController < ApplicationController
       if user.token_reset!("confirmation")
         render json: { success: true }, status: :ok
       else
-        render json: { error: user.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: user.errors }, status: :unprocessable_entity
       end
     else
       render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :not_found

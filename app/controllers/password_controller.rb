@@ -3,7 +3,7 @@ class PasswordController < ApplicationController
   
   def forgot
     if params[:email].blank?
-      return render json: {error: 'Email not present'}
+      render json: {error: 'Email not present'}
     end
 
     user = User.find_by(email: params[:email])
@@ -18,7 +18,7 @@ class PasswordController < ApplicationController
 
   def token
     if params[:token].blank?
-      return render json: { error: 'Token not present' }
+      render json: { error: 'Token not present' }
     end
     
     @user = User.find_by(password_token: params[:token])
@@ -32,7 +32,7 @@ class PasswordController < ApplicationController
 
   def reset
     if params[:token].blank?
-      return render json: { error: 'Token not present' }
+      render json: { error: 'Token not present' }
     end
     
     @user = User.find_by(password_token: params[:token])
@@ -42,10 +42,10 @@ class PasswordController < ApplicationController
         if @user.token_reset!("password")
           render json: { success: true }, status: :ok
         else
-          render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: @user.errors }, status: :unprocessable_entity
         end
       else
-        render json: @user.errors, status: :unprocessable_entity
+        render json: { errors: @user.errors }, status: :unprocessable_entity
       end
     else
       render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :not_found

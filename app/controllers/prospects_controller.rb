@@ -92,7 +92,7 @@ class ProspectsController < ApplicationController
 
     def validate_type()
       if params[:type].blank?
-        return render json: { error: 'Oauth Type invalid.' }
+        render json: { error: 'Oauth Type invalid.' }
       end
     end
 

@@ -1,9 +1,9 @@
-class CrmProvider
+class ApiCrm
 	class << self
-		def oauth(type)
+		def contacts(type)
 			case type
 			when "hubspot"
-				Hubspot::Oauth
+				Hubspot::Contact
 			else
 				raise StandardError.new "Error Oauth: type has an invalid value (#{type})"
 			end

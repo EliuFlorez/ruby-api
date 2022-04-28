@@ -46,6 +46,6 @@ class CrmsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def crm_params
-      params.permit(:id, :user_id, :name, :entity, :status)
+      params.permit(:id, :user_id, :name, :status)
     end
 end

@@ -8,7 +8,7 @@ class SearchController < ApplicationController
 
   def connect
     if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
+      render json: { error: 'Oauth Type invalid.' }
     end
     
     # Oauth Authorize
@@ -20,11 +20,11 @@ class SearchController < ApplicationController
 
   def callback
     if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
+      render json: { error: 'Oauth Type invalid.' }
     end
 
     if params[:code].blank?
-      return render json: { error: 'Oauth Code invalid.' }
+      render json: { error: 'Oauth Code invalid.' }
     end
 
     # Oauth Code

@@ -3,7 +3,7 @@ class IntegrationController < ApplicationController
   
   def connect
     if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
+      render json: { error: 'Oauth Type invalid.' }
     end
     
     # Oauth Authorize
@@ -15,11 +15,11 @@ class IntegrationController < ApplicationController
 
   def callback
     if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
+      render json: { error: 'Oauth Type invalid.' }
     end
 
     if params[:code].blank?
-      return render json: { error: 'Oauth Code invalid.' }
+      render json: { error: 'Oauth Code invalid.' }
     end
 
     # Oauth Code
@@ -28,7 +28,7 @@ class IntegrationController < ApplicationController
     
     # Crm Create o Update
     crm = Crm.find_or_create_by(user_id: @current_user.id, entity: params[:type])
-    crm.update(name: params[:type], oauth: oauth)
+    crm.update(name: params[:type], oauth: oauth, status: true)
 
     # Redirection
     redirect_to "http://localhost:3000/app/overview"
@@ -36,13 +36,20 @@ class IntegrationController < ApplicationController
 
   def select
     if params[:type].blank?
-      return render json: { error: 'Oauth Type invalid.' }
+      render json: { error: 'Oauth Type invalid.' }
     end
     
     # Crm Create o Update
-    crm = Crm.find_or_create_by(user_id: @current_user.id, entity: params[:type])
-    crm.update(status: true)
-
-    return render json: { success: true }
+    @crm = Crm.find_by(user_id: @current_user.id, entity: params[:type])
+    
+    if @crm.present? 
+      if @crm.update(status: true)
+        render json: { success: true }
+      else
+        render json: @crm.errors, status: :unprocessable_entity
+      end
+    else
+      render json: { success: false }
+    end
   end
 end
