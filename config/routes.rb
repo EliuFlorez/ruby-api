@@ -32,6 +32,11 @@ Rails.application.routes.draw do
   get '/confirmation/link', to: 'confirmation#link'
   post '/confirmation/reset', to: 'confirmation#reset'
 
+  # Change Email
+  get '/email/token', to: 'email#token'
+  post '/email/link', to: 'email#link'
+  post '/email/change', to: 'email#change'
+
   # Oauth Type
   get '/crm/:type/connect', to: 'integration#connect'
   get '/crm/:type/callback', to: 'integration#callback'

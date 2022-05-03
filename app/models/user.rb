@@ -84,40 +84,56 @@ class User < ApplicationRecord
 
   # Token Generate
   def token_save!(type)
-    if type == "password"
+    case type
+    when "password"
       self.password_token = token_secure
       self.password_sent_at = Time.now.utc
-    elsif type == "code"
+    when "code"
       self.twofa_code = rand(999_999)
       self.twofa_code_token = token_secure
       self.twofa_code_at = Time.now.utc
-    else
+    when "email"
+      self.change_email_token = token_secure
+      self.change_email_at = Time.now.utc
+    when "confirmation"
       self.confirmation_token = token_secure
       self.confirmation_sent_at = Time.now.utc
+    else
+      raise StandardError.new "Error: type has an invalid value (#{type})"
     end
     save!
   end
   
   # Token Valid
   def token_valid!(type)
-    if type == "password"
+    case type
+    when "password"
       (self.password_sent_at + 4.hours) > Time.now.utc
-    elsif type == "code"
+    when "code"
       (self.twofa_code_at + 4.hours) > Time.now.utc
-    else
+    when "email"
+      (self.change_email_at + 4.hours) > Time.now.utc
+    when "confirmation"
       (self.confirmation_sent_at + 4.hours) > Time.now.utc
+    else
+      raise StandardError.new "Error: type has an invalid value (#{type})"
     end
   end
   
   # Token Reset
   def token_reset!(type)
-    if type == "password"
+    case type
+    when "password"
       self.password_token = nil
-    elsif type == "code"
+    when "code"
       self.twofa_code = nil
       self.twofa_code_token = nil
-    else
+    when "email"
+      self.change_email_token = nil
+    when "confirmation"
       self.confirmation_token = nil
+    else
+      raise StandardError.new "Error: type has an invalid value (#{type})"
     end
     save!
   end

@@ -129,6 +129,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
     t.string "twofa_code"
     t.string "twofa_code_token"
     t.datetime "twofa_code_at"
+    t.string "change_email_token"
+    t.datetime "change_email_at"
     t.string "password_token"
     t.datetime "password_sent_at"
     t.integer "sign_in_count", default: 0, null: false
@@ -145,9 +147,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
     t.datetime "locked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["change_email_token"], name: "index_users_on_change_email_token"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["password_token"], name: "index_users_on_password_token"
+    t.index ["twofa_code"], name: "index_users_on_twofa_code"
+    t.index ["twofa_code_token"], name: "index_users_on_twofa_code_token"
   end
 
   add_foreign_key "crms", "users"

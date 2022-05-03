@@ -20,6 +20,10 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string   :twofa_code
       t.string   :twofa_code_token
       t.datetime :twofa_code_at
+
+      ## Change email
+      t.string   :change_email_token
+      t.datetime :change_email_at
       
       ## Recoverable
       t.string   :password_token
@@ -47,6 +51,9 @@ class CreateUsers < ActiveRecord::Migration[7.0]
     end
 
     add_index :users, :email, unique: true
+    add_index :users, :twofa_code
+    add_index :users, :twofa_code_token
+    add_index :users, :change_email_token
     add_index :users, :password_token
     add_index :users, :confirmation_token
   end
