@@ -14,7 +14,13 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :provice_state
       t.string :portal_code
       t.string :country
- 
+
+      ## Two Factor Auth
+      t.boolean  :sign_in_twofa, default: false
+      t.string   :twofa_code
+      t.string   :twofa_code_token
+      t.datetime :twofa_code_at
+      
       ## Recoverable
       t.string   :password_token
       t.datetime :password_sent_at

@@ -87,6 +87,10 @@ class User < ApplicationRecord
     if type == "password"
       self.password_token = token_secure
       self.password_sent_at = Time.now.utc
+    elsif type == "code"
+      self.twofa_code = rand(999_999)
+      self.twofa_code_token = token_secure
+      self.twofa_code_at = Time.now.utc
     else
       self.confirmation_token = token_secure
       self.confirmation_sent_at = Time.now.utc
@@ -98,6 +102,8 @@ class User < ApplicationRecord
   def token_valid!(type)
     if type == "password"
       (self.password_sent_at + 4.hours) > Time.now.utc
+    elsif type == "code"
+      (self.twofa_code_at + 4.hours) > Time.now.utc
     else
       (self.confirmation_sent_at + 4.hours) > Time.now.utc
     end
@@ -107,6 +113,9 @@ class User < ApplicationRecord
   def token_reset!(type)
     if type == "password"
       self.password_token = nil
+    elsif type == "code"
+      self.twofa_code = nil
+      self.twofa_code_token = nil
     else
       self.confirmation_token = nil
     end

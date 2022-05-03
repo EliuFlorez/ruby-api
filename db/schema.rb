@@ -125,6 +125,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_31_003647) do
     t.string "provice_state"
     t.string "portal_code"
     t.string "country"
+    t.boolean "sign_in_twofa", default: false
+    t.string "twofa_code"
+    t.string "twofa_code_token"
+    t.datetime "twofa_code_at"
     t.string "password_token"
     t.datetime "password_sent_at"
     t.integer "sign_in_count", default: 0, null: false

@@ -1,16 +1,57 @@
 class AuthenticationController < ApplicationController
-  before_action :authorize, except: %i[ signin signup ]
+  #before_action :authorize, except: %i[ logout ]
 
   # POST /auth/signin
   def signin
     @user = User.find_by_email(params[:email])
     if @user&.authenticate(params[:password])
-      session[:user_id] = @user.id
-      token = JsonWebToken.encode(user_id: @user.id)
-      time = Time.now + 24.hours.to_i
-      render json: { token: token, expire: time.strftime("%m-%d-%Y %H:%M") }, status: :ok
+      if @user.sign_in_twofa
+        if @user.token_save!("code")
+          ## Send Email Code
+          render json: { twofa: true, token: @user.twofa_code_token }, status: :ok
+        else
+          render json: { error: 'Error code twofa' }, status: :unauthorized
+        end
+      else
+        session[:user_id] = @user.id
+        token = JsonWebToken.encode(user_id: @user.id)
+        time = Time.now + 24.hours.to_i
+        render json: { token: token, expire: time.strftime("%m-%d-%Y %H:%M") }, status: :ok
+      end
     else
       render json: { error: 'Email or Password invalid' }, status: :unauthorized
+    end
+  end
+
+  # POST /auth/signin/code
+  def signin_code
+    @user = User.find_by(twofa_code: params[:code])
+    if @user.present?
+      if @user.token_reset!("code")
+        session[:user_id] = @user.id
+        token = JsonWebToken.encode(user_id: @user.id)
+        time = Time.now + 24.hours.to_i
+        render json: { token: token, expire: time.strftime("%m-%d-%Y %H:%M") }, status: :ok
+      else
+        render json: { errors: @user.errors }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: 'Code invalid' }, status: :unauthorized
+    end
+  end
+
+  # GET /auth/signin/:code
+  def valid_code
+    if params[:token].blank?
+      render json: { error: 'Token not present' }
+    end
+    
+    @user = User.find_by(twofa_code_token: params[:token])
+
+    if @user.present? && @user.token_valid!("code")
+      render json: { success: true }, status: :ok
+    else
+      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :unprocessable_entity
     end
   end
 

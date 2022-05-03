@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   # Auth Login
   post '/auth/signin', to: 'authentication#signin'
   post '/auth/signup', to: 'authentication#signup'
+  post '/auth/signin/code', to: 'authentication#signin_code'
+  get '/auth/signin/valid', to: 'authentication#valid_code'
   get '/auth/logout', to: 'authentication#logout'
   
   # Valid

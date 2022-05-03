@@ -12,7 +12,7 @@ class PasswordController < ApplicationController
       user.token_save!("password")
       render json: { success: true }, status: :ok
     else
-      render json: { error: 'Email address not found. Please check and try again.' }, status: :not_found
+      render json: { error: 'Email address not found. Please check and try again.' }, status: :unprocessable_entity
     end
   end
 
@@ -26,16 +26,16 @@ class PasswordController < ApplicationController
     if @user.present? && @user.token_valid!("password")
       render json: { success: true }, status: :ok
     else
-      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :not_found
+      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :unprocessable_entity
     end
   end
 
   def reset
-    if params[:token].blank?
+    if params[:password_token].blank?
       render json: { error: 'Token not present' }
     end
     
-    @user = User.find_by(password_token: params[:token])
+    @user = User.find_by(password_token: params[:password_token])
 
     if @user.present? && @user.token_valid!("password")
       if @user.update(reset_params)
@@ -48,7 +48,7 @@ class PasswordController < ApplicationController
         render json: { errors: @user.errors }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :not_found
+      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :unprocessable_entity
     end
   end
 

@@ -14,7 +14,7 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    if @user.update(user_params)
+    if @user.update(set_params)
       render json: @user
     else
       render json: @user.errors, status: :unprocessable_entity
@@ -23,7 +23,7 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1
   def update
-    if @user.update(user_params)
+    if @user.update(set_params)
       render json: @user
     else
       render json: @user.errors, status: :unprocessable_entity
@@ -41,10 +41,24 @@ class UsersController < ApplicationController
       @user = User.find(@current_user.id)
     end
 
+    def set_params
+      if params[:type].blank?
+        render json: { error: 'Oauth Type invalid.' }
+      end
+      p params[:type]
+      case params[:type]
+        when "detail"
+          detail_params
+        when "twofa"
+          twofa_params
+        else
+          raise StandardError.new "Error Oauth: type has an invalid params"
+        end
+    end
+
     # Only allow a list of trusted parameters through.
-    def user_params
+    def detail_params
       params.permit(
-        :id, 
         :first_name, 
         :last_name, 
         :email, 
@@ -55,6 +69,12 @@ class UsersController < ApplicationController
         :provice_state, 
         :portal_code, 
         :country
+      )
+    end
+
+    def twofa_params
+      params.permit(
+        :sign_in_twofa
       )
     end
 end
