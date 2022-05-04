@@ -3,7 +3,7 @@ class PasswordController < ApplicationController
   
   def forgot
     if params[:email].blank?
-      render json: {error: 'Email not present'}
+      return render json: {error: 'Email not present'}
     end
 
     @user = User.find_by(email: params[:email])
@@ -17,7 +17,7 @@ class PasswordController < ApplicationController
 
   def token
     if params[:token].blank?
-      render json: { error: 'Token not present' }
+      return render json: { error: 'Token not present' }
     end
     
     @user = User.find_by(password_token: params[:token])
@@ -31,7 +31,7 @@ class PasswordController < ApplicationController
 
   def reset
     if params[:password_token].blank?
-      render json: { error: 'Token not present' }
+      return render json: { error: 'Token not present' }
     end
     
     @user = User.find_by(password_token: params[:password_token])

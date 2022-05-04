@@ -21,7 +21,6 @@ Rails.application.routes.draw do
   
   # Valid
   post '/check/email', to: 'valid#email'
-  post '/check/username', to: 'valid#username'
 
   # Password
   get '/password/token', to: 'password#token'

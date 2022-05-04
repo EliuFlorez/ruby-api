@@ -4,10 +4,9 @@ class CrmsController < ApplicationController
 
   # GET /crms
   def index
-    @crm = Crm.where(user_id: @current_user.id, status: true).first
     @crms = Crm.where(user_id: @current_user.id)
     
-    render json: { current: @crm, results: @crms }, list: true, status: :ok
+    render json: { results: @crms }, list: true, status: :ok
   end
 
   # GET /crms/1
