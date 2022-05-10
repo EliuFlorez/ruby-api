@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :authorize
-  before_action :set_user, only: %i[ index create update destroy ]
+  before_action :set_user, only: %i[ index create update destroy password ]
 
   # GET /users
   def index
@@ -35,6 +35,14 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
+  def password
+    if @user.present? && @user.token_save!("password")
+      render json: { success: true }, status: :ok
+    else
+      render json: { error: 'Email address not found. Please check and try again.' }, status: :unprocessable_entity
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -43,16 +51,15 @@ class UsersController < ApplicationController
 
     def set_params
       if params[:type].blank?
-        render json: { error: 'Oauth Type invalid.' }
+        render json: { error: 'User Type invalid.' }
       end
-      p params[:type]
       case params[:type]
         when "detail"
           detail_params
         when "twofa"
           twofa_params
         else
-          raise StandardError.new "Error Oauth: type has an invalid params"
+          raise StandardError.new "Error User: type has an invalid params"
         end
     end
 

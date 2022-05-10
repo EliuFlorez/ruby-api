@@ -36,6 +36,9 @@ Rails.application.routes.draw do
   post '/email/link', to: 'email#link'
   post '/email/change', to: 'email#change'
 
+  # User - Password Reset
+  post '/users/password', to: 'users#password'
+
   # Oauth Type
   get '/crm/:type/connect', to: 'integration#connect'
   get '/crm/:type/callback', to: 'integration#callback'
