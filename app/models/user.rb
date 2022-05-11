@@ -26,7 +26,8 @@ class User < ApplicationRecord
       :city,
       :provice_state,
       :portal_code,
-      :country
+      :country,
+      :sign_in_twofa
     ]
     super(options)
   end

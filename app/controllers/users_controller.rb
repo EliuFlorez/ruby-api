@@ -4,7 +4,7 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    render json: { user: @user, crms: @user.crms }, status: :ok
+    render json: @user, status: :ok
   end
 
   # GET /users/1

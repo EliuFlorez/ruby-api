@@ -31,7 +31,7 @@ class IntegrationController < ApplicationController
     crm.update(name: params[:type], oauth: oauth, status: true)
 
     # Redirection
-    redirect_to "http://localhost:3000/app/overview"
+    redirect_to "http://localhost:3000/app/overview?crm=1"
   end
 
   def select
@@ -39,7 +39,10 @@ class IntegrationController < ApplicationController
       render json: { error: 'Oauth Type invalid.' }
     end
     
-    # Crm Create o Update
+    # All Status False
+    Crm.where(user_id: @current_user.id).update_all(status: false)
+
+    # Crm Status Update
     @crm = Crm.find_by(user_id: @current_user.id, entity: params[:type])
     
     if @crm.present? 
@@ -49,7 +52,7 @@ class IntegrationController < ApplicationController
         render json: @crm.errors, status: :unprocessable_entity
       end
     else
-      render json: { success: false }
+      render json: { error: "CRM not found" }
     end
   end
 end

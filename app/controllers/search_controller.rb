@@ -35,6 +35,6 @@ class SearchController < ApplicationController
     crm.update(name: params[:type], oauth: oauth)
 
     # Redirection
-    redirect_to "http://localhost:3000/app/overview"
+    redirect_to "http://localhost:3000/app/overview?sch=1"
   end
 end
