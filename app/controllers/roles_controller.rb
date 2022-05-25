@@ -1,4 +1,5 @@
 class RolesController < ApplicationController
+  before_action :authorize
   before_action :authorize_admin
   before_action :set_role, only: %i[ show update destroy ]
 

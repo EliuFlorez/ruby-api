@@ -9,8 +9,8 @@ Rails.application.routes.draw do
   resources :prospects
   
   # Resources Admin
-  # resources :roles
-  # resources :permissions
+  resources :roles
+  resources :permissions
 
   # Auth Login
   post '/auth/signin', to: 'authentication#signin'

@@ -33,6 +33,10 @@ class ApplicationController < ActionController::API
     render json: { error: 'not_found' }
   end
 
+  def authorize_admin
+    true
+  end
+
   def authorize
     if session[:user_id]
       @current_user = User.find(session[:user_id])
