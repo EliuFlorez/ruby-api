@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class UserController < ApplicationController
   before_action :authorize
   before_action :set_user, only: %i[ index create update destroy password ]
 

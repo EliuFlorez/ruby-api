@@ -3,14 +3,17 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
+  # Resources Admin
+  namespace :admin do
+    resources :users
+    resources :roles
+    resources :permissions
+  end
+
   # Resources all
-  resources :users
+  resources :user
   resources :crms
   resources :prospects
-  
-  # Resources Admin
-  resources :roles
-  resources :permissions
 
   # Auth Login
   post '/auth/signin', to: 'authentication#signin'
@@ -37,7 +40,7 @@ Rails.application.routes.draw do
   post '/email/change', to: 'email#change'
 
   # User - Password Reset
-  post '/users/password', to: 'users#password'
+  post '/user/password', to: 'user#password'
 
   # Oauth Type
   get '/crm/:type/connect', to: 'integration#connect'
