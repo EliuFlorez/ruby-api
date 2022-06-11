@@ -68,14 +68,7 @@ class UserController < ApplicationController
       params.permit(
         :first_name, 
         :last_name, 
-        :email, 
-        :phone, 
-        :address, 
-        :address_number, 
-        :city, 
-        :provice_state, 
-        :portal_code, 
-        :country
+        :email
       )
     end
 

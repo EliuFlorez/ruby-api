@@ -25,7 +25,12 @@ class AuthenticationController < ApplicationController
 
   # POST /auth/signin/code
   def signin_code
+    if params[:code].blank?
+      render json: { error: 'Code not present' }
+    end
+
     @user = User.find_by(twofa_code: params[:code])
+    
     if @user.present?
       if @user.token_reset!("code")
         session[:user_id] = @user.id
@@ -41,7 +46,7 @@ class AuthenticationController < ApplicationController
   end
 
   # GET /auth/signin/:code
-  def valid_code
+  def signin_valid
     if params[:token].blank?
       render json: { error: 'Token not present' }
     end
@@ -57,13 +62,44 @@ class AuthenticationController < ApplicationController
 
   # POST /auth/signup
   def signup
-    @user = User.new(signup_params)
-
-    if @user.save
-      session[:user_id] = @user.id
-      render json: { success: true }, status: :created, location: @user
+    if params[:token].present?
+      @user = User.find_by(invitation_token: params[:token])
+      if @user.present? && @user.token_valid!("invitation")
+        if @user.update(signup_params)
+          if @user.token_reset!("invitation")
+            render json: { success: true }, status: :ok
+          else
+            render json: { errors: @user.errors }, status: :unprocessable_entity
+          end
+        else
+          render json: { errors: @user.errors }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :unprocessable_entity
+      end
     else
-      render json: { errors: @user.errors }, status: :unprocessable_entity
+      @user = User.new(signup_params)
+      if @user.save
+        session[:user_id] = @user.id
+        render json: { success: true }, status: :created, location: @user
+      else
+        render json: { errors: @user.errors }, status: :unprocessable_entity
+      end
+    end
+  end
+
+  # GET /auth/signup/invitation
+  def signup_invitation
+    if params[:token].blank?
+      return render json: { error: 'Token not present' }
+    end
+
+    @user = User.find_by(invitation_token: params[:token])
+
+    if @user.present? && @user.token_valid!("invitation")
+      render json: @user, status: :ok
+    else
+      render json: { error: 'Link not valid or expired. Try generating a new link.' }, status: :unprocessable_entity
     end
   end
 

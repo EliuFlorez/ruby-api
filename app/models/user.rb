@@ -93,6 +93,9 @@ class User < ApplicationRecord
     when "confirmation"
       self.confirmation_token = token_secure
       self.confirmation_sent_at = Time.now.utc
+    when "invitation"
+      self.invitation_token = token_secure
+      self.invitation_sent_at = Time.now.utc
     else
       raise StandardError.new "Error: type has an invalid value (#{type})"
     end
@@ -110,6 +113,8 @@ class User < ApplicationRecord
       (self.change_email_at + 4.hours) > Time.now.utc
     when "confirmation"
       (self.confirmation_sent_at + 4.hours) > Time.now.utc
+    when "invitation"
+      (self.invitation_sent_at + 24.hours) > Time.now.utc
     else
       raise StandardError.new "Error: type has an invalid value (#{type})"
     end
@@ -127,6 +132,8 @@ class User < ApplicationRecord
       self.change_email_token = nil
     when "confirmation"
       self.confirmation_token = nil
+    when "invitation"
+      self.invitation_token = nil
     else
       raise StandardError.new "Error: type has an invalid value (#{type})"
     end
