@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_secure_password
   
   # Relations
+  has_many :accounts
   has_many :crms
   has_many :prospects
 
@@ -20,13 +21,6 @@ class User < ApplicationRecord
       :first_name, 
       :last_name, 
       :email, 
-      :phone,
-      :address,
-      :address_number,
-      :city,
-      :provice_state,
-      :portal_code,
-      :country,
       :sign_in_twofa
     ]
     super(options)

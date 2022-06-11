@@ -6,15 +6,6 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :email
       t.string :password_digest
 
-      ## Details
-      t.string :phone
-      t.string :address
-      t.string :address_number
-      t.string :city
-      t.string :provice_state
-      t.string :portal_code
-      t.string :country
-
       ## Two Factor Auth
       t.boolean  :sign_in_twofa, default: false
       t.string   :twofa_code

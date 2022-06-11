@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   end
 
   # Resources all
+  resources :accounts
   resources :user
   resources :crms
   resources :prospects
