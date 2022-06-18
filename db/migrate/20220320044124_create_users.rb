@@ -4,6 +4,7 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :first_name
       t.string :last_name
       t.string :email
+      t.string :phone
       t.string :password_digest
 
       ## Two Factor Auth
@@ -52,5 +53,6 @@ class CreateUsers < ActiveRecord::Migration[7.0]
     add_index :users, :change_email_token
     add_index :users, :password_token
     add_index :users, :confirmation_token
+    add_index :users, :invitation_token
   end
 end

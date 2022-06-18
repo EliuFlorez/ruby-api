@@ -6,12 +6,13 @@ Rails.application.routes.draw do
   # Resources Admin
   namespace :admin do
     resources :users
+    resources :accounts
     resources :roles
     resources :permissions
   end
 
   # Resources all
-  resources :accounts
+  resources :account
   resources :user
   resources :crms
   resources :prospects

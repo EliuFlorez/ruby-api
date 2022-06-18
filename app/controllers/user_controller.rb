@@ -68,7 +68,8 @@ class UserController < ApplicationController
       params.permit(
         :first_name, 
         :last_name, 
-        :email
+        :email,
+        :phone
       )
     end
 
