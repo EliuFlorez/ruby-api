@@ -13,7 +13,9 @@ class AuthenticationController < ApplicationController
           render json: { error: 'Error code twofa' }, status: :unauthorized
         end
       else
+        @userHasAccount = UserHasAccount.find_by(user_id: @user.id)
         session[:user_id] = @user.id
+        session[:account_id] = @userHasAccount.account_id
         token = JsonWebToken.encode(user_id: @user.id)
         time = Time.now + 24.hours.to_i
         render json: { token: token, expire: time.strftime("%m-%d-%Y %H:%M") }, status: :ok
@@ -33,7 +35,9 @@ class AuthenticationController < ApplicationController
     
     if @user.present?
       if @user.token_reset!("code")
+        @userHasAccount = UserHasAccount.find_by(user_id: @user.id)
         session[:user_id] = @user.id
+        session[:account_id] = @userHasAccount.account_id
         token = JsonWebToken.encode(user_id: @user.id)
         time = Time.now + 24.hours.to_i
         render json: { token: token, expire: time.strftime("%m-%d-%Y %H:%M") }, status: :ok
@@ -79,9 +83,20 @@ class AuthenticationController < ApplicationController
       end
     else
       @user = User.new(signup_params)
+      @account = Account.new(account_params)
       if @user.save
-        session[:user_id] = @user.id
-        render json: { success: true }, status: :created, location: @user
+        if @account.save
+          @userHasAccount = UserHasAccount.new(user_id: @user.id, account_id: @account.id)
+          if @userHasAccount.save
+            session[:user_id] = @user.id
+            session[:account_id] = @account.id
+            render json: { success: true }, status: :created, location: @user
+          else
+            render json: { errors: @userHasAccount.errors }, status: :unprocessable_entity
+          end
+        else
+          render json: { errors: @account.errors }, status: :unprocessable_entity
+        end
       else
         render json: { errors: @user.errors }, status: :unprocessable_entity
       end
@@ -104,8 +119,7 @@ class AuthenticationController < ApplicationController
   end
 
   def logout
-    session.delete(:user_id)
-    
+    session.delete(:user_id)    
     render json: { success: true }, status: :ok
   end
 
@@ -117,5 +131,9 @@ class AuthenticationController < ApplicationController
 
   def signup_params
     params.permit(:id, :first_name, :last_name, :email, :password, :password_confirmation)
+  end
+
+  def account_params
+    params.permit(:name, :email)
   end
 end

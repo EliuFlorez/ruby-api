@@ -16,6 +16,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "name"
+    t.string "email"
     t.string "phone"
     t.string "address"
     t.string "address_number"
@@ -25,6 +26,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
     t.string "country"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_accounts_on_email", unique: true
     t.index ["name"], name: "index_accounts_on_name"
   end
 
@@ -42,29 +44,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
     t.index ["user_id"], name: "index_crms_on_user_id"
   end
 
-  create_table "model_has_permissions", force: :cascade do |t|
-    t.bigint "permission_id", null: false
-    t.string "model_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["model_type"], name: "index_model_has_permissions_on_model_type"
-    t.index ["permission_id"], name: "index_model_has_permissions_on_permission_id"
-  end
-
-  create_table "model_has_roles", force: :cascade do |t|
-    t.bigint "role_id", null: false
-    t.string "model_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["model_type"], name: "index_model_has_roles_on_model_type"
-    t.index ["role_id"], name: "index_model_has_roles_on_role_id"
-  end
-
   create_table "permissions", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_permissions_on_name"
+    t.index ["name"], name: "index_permissions_on_name", unique: true
   end
 
   create_table "properties", force: :cascade do |t|
@@ -100,8 +84,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
   create_table "role_has_permissions", force: :cascade do |t|
     t.bigint "permission_id", null: false
     t.bigint "role_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.index ["permission_id"], name: "index_role_has_permissions_on_permission_id"
     t.index ["role_id"], name: "index_role_has_permissions_on_role_id"
   end
@@ -110,7 +92,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_roles_on_name"
+    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "searches", force: :cascade do |t|
@@ -138,14 +120,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
     t.string "first_name"
     t.string "last_name"
     t.string "email"
-    t.string "password_digest"
     t.string "phone"
-    t.string "address"
-    t.string "address_number"
-    t.string "city"
-    t.string "provice_state"
-    t.string "portal_code"
-    t.string "country"
+    t.string "password_digest"
     t.boolean "sign_in_twofa", default: false
     t.string "twofa_code"
     t.string "twofa_code_token"
@@ -163,6 +139,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.string "invitation_token"
+    t.datetime "invitation_at"
+    t.datetime "invitation_sent_at"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
@@ -171,14 +150,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_11_170741) do
     t.index ["change_email_token"], name: "index_users_on_change_email_token"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["invitation_token"], name: "index_users_on_invitation_token"
     t.index ["password_token"], name: "index_users_on_password_token"
     t.index ["twofa_code"], name: "index_users_on_twofa_code"
     t.index ["twofa_code_token"], name: "index_users_on_twofa_code_token"
   end
 
   add_foreign_key "crms", "users"
-  add_foreign_key "model_has_permissions", "permissions"
-  add_foreign_key "model_has_roles", "roles"
   add_foreign_key "properties", "prospects"
   add_foreign_key "prospects", "crms"
   add_foreign_key "prospects", "users"

@@ -6,6 +6,6 @@ class CreatePermissions < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :permissions, :name
+    add_index :permissions, :name, unique: true
   end
 end

@@ -45,6 +45,7 @@ class AccountController < ApplicationController
     def set_params
       params.permit(
         :name,
+        :email,
         :phone,
         :address,
         :address_number,
